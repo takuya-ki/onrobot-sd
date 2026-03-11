@@ -67,7 +67,7 @@ class SD():
 
     def _err_handler(self, t_index):
         '''
-        Checks ant interprets command result and erro code
+        Checks and interprets command result and error code
 
         @param t_index: The position of the device (0 for single, 1 for dual primary, 2 for dual secondary)
         @type t_index: int
@@ -85,9 +85,9 @@ class SD():
 
         # Check the error code
         if err_code != 0:
-            if err_code & 0x04 != 0:
-                print("Screw driver saftey circuit triggered")
-            if err_code & 0x08 != 0:
+            if (err_code & 0x04) != 0:
+                print("Screw driver safety circuit triggered")
+            if (err_code & 0x08) != 0:
                 print("Screw driver not calibrated")
 
             init_err = err_code & init_err_mask
@@ -108,9 +108,9 @@ class SD():
             elif init_err == 0x70:
                 print("Screw driver init error: Index mark value has changed (clean encoder disk)")
 
-            if err_code & 0x100:
+            if (err_code & 0x100):
                 print("Wrong Quick changer type for the Screw driver")
-            if err_code & 0x200:
+            if (err_code & 0x200):
                 print("Wrong Power Supply Type for the screw driver")
         else:
             # No error
@@ -242,7 +242,7 @@ class SD():
         @type t_index: int
         @param force:  Screw in force in N (18-30)
         @type force: int
-        @param screw_len: Screwing lenght in mm (0-35)
+        @param screw_len: Screwing length in mm (0-35)
         @type screw_len: float
         @param torq: Screw in torque in Nm (0-5)
         @type torq: float
@@ -272,7 +272,7 @@ class SD():
         if f_wait:
             busy_cnt = 0
             f_busy = self.isBusy(t_index)
-            while (f_busy):
+            while (f_busy is True):
                 time.sleep(0.1)
                 f_busy = self.isBusy(t_index)
                 busy_cnt += 1
@@ -330,7 +330,7 @@ class SD():
         if f_wait:
             busy_cnt = 0
             f_busy = self.isBusy(t_index)
-            while (f_busy):
+            while (f_busy is True):
                 time.sleep(0.1)
                 f_busy = self.isBusy(t_index)
                 busy_cnt += 1
@@ -370,6 +370,9 @@ class SD():
         @type f_wait: bool
         '''
 
+        if self.isconn(t_index) is False:
+            return CONN_ERR
+
         # Sanity check
         if zforce < 18 or zforce > 30:
             print("Invalid zforce parameter for pickup screw command, valid range: 18-30")
@@ -385,12 +388,12 @@ class SD():
         if f_wait:
             busy_cnt = 0
             f_busy = self.isBusy(t_index)
-            while (f_busy):
+            while (f_busy is True):
                 time.sleep(0.1)
                 f_busy = self.isBusy(t_index)
                 busy_cnt += 1
                 if busy_cnt > 100:
-                    print("Screw driver tighten command timeout")
+                    print("Screw driver pickup screw command timeout")
                     timeout = True
                     break
             else:
@@ -437,7 +440,7 @@ class SD():
         if f_wait:
             busy_cnt = 0
             f_busy = self.isBusy(t_index)
-            while (f_busy):
+            while (f_busy is True):
                 time.sleep(0.1)
                 f_busy = self.isBusy(t_index)
                 busy_cnt += 1
@@ -475,8 +478,8 @@ class SD():
 
     def resetpower(self, t_index):
         '''
-        Resets the power of the grippers\n
-        Needs to be issued after saftey event
+        Resets the power of the screwdriver\n
+        Needs to be issued after safety event
 
         @param t_index: The position of the device (0 for single, 1 for dual primary, 2 for dual secondary)
         @type t_index: int

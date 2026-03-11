@@ -5,25 +5,22 @@ import argparse
 from onrobot import SD
 
 
-def run_demo():
+def run_demo(sd_id, bit_extender, ip_address):
     """Runs shank moving demonstration once."""
     sd = SD(bit_extender, ip_address)
 
     if sd.isconn(sd_id):  # connected
-        while True:
-            if not sd.isBusy(sd_id):  # not busy
-                print("Shank pose:", str(sd.get_shank_pos(sd_id)) + "mm")
-                break
-        
-        while True:
-            if not sd.isBusy(sd_id):  # not busy
-                sd.move_shank(t_index=sd_id, shank_pos=10+bit_extender, f_wait=True)
-                break
+        while sd.isBusy(sd_id) is True:
+            pass
+        print("Shank pose:", str(sd.get_shank_pos(sd_id)) + "mm")
 
-        while True:
-            if not sd.isBusy(sd_id):  # not busy
-                sd.move_shank(t_index=sd_id, shank_pos=30+bit_extender, f_wait=True)
-                break
+        while sd.isBusy(sd_id) is True:
+            pass
+        sd.move_shank(t_index=sd_id, shank_pos=10+bit_extender, f_wait=True)
+
+        while sd.isBusy(sd_id) is True:
+            pass
+        sd.move_shank(t_index=sd_id, shank_pos=30+bit_extender, f_wait=True)
 
 
 def get_options():
@@ -47,4 +44,4 @@ if __name__ == '__main__':
     sd_id = args.id
     bit_extender = args.bit_ext
     ip_address = args.ip
-    run_demo()
+    run_demo(sd_id, bit_extender, ip_address)
